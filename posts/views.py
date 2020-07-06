@@ -7,16 +7,16 @@ from .forms import PostForm
 
 @login_required
 def new_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.save()
-            return redirect('index')
-        return render(request, 'new_post.html', {'form': form})
-    form = PostForm()
-    return render(request, 'new_post.html', {'form': form})
+    if request.method != 'POST':
+        form = PostForm()
+        return render(request, 'posts/new_post.html', {'form': form})
+    form = PostForm(request.POST)
+    if not form.is_valid():
+        return render(request, 'posts/new_post.html', {'form': form})
+    post = form.save(commit=False)
+    post.author = request.user
+    post.save()
+    return redirect('index')
 
 
 @login_required
